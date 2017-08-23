@@ -77,10 +77,9 @@
     [self.view addSubview:self.pageVC.view];
     
     _pageVC.view.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-paddingLeft-[view]-paddingRight-|" options:NSLayoutFormatAlignAllLeft metrics:@{@"paddingLeft":@(-16),@"paddingRight":@"-16"} views:@{@"view":_pageVC.view}]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-paddingLeft-[view]-paddingRight-|" options:NSLayoutFormatAlignAllLeft metrics:@{@"paddingLeft":@(-16),@"paddingRight":@(-16)} views:@{@"view":_pageVC.view}]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view2]-[view]-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":_pageVC.view,@"view2":_segmentControl}]];
 
-//    self.pageVC.view.frame = CGRectMake(0, CGRectGetHeight(self.segmentControl.frame), CGRectGetWidth(self.pageVC.view.frame), CGRectGetHeight(self.pageVC.view.frame));
     [self.pageVC didMoveToParentViewController:self];
 }
 - (void)yto_addParentViewController:(UIViewController *)vc{
@@ -90,7 +89,6 @@
     self.view.translatesAutoresizingMaskIntoConstraints = NO;
     [vc.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":self.view}]];
     [vc.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":self.view}]];
-    vc.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     [self didMoveToParentViewController:vc];
 }
 
