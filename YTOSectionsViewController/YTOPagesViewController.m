@@ -6,8 +6,7 @@
 //
 
 #import "YTOPagesViewController.h"
-#import "FirstViewController.h"
-#import "SecondViewController.h"
+
 
 @interface YTOPagesViewController ()<UIPageViewControllerDataSource,UIPageViewControllerDelegate>
 @property(nonatomic,strong)UIPageViewController *pageViewController;
@@ -29,6 +28,12 @@
     return  self;
 }
 #pragma mark - UIPageViewControllerDataSource&UIPageViewControllerDelegate
+- (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<UIViewController *> *)pendingViewControllers{
+    self.currentViewController = [pendingViewControllers firstObject];
+    if (self.YTOPageViewControllerWillPageChanged) {
+        self.YTOPageViewControllerWillPageChanged(self.currentViewController);
+    }
+}
 - (nullable UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController{
     NSInteger currentIndex = [self private_indexOfViewController:viewController];
     if (currentIndex>0) {
@@ -50,14 +55,32 @@
 }
 
 #pragma mark - Private
+- (NSString *)private_findXibName:(Class)className{
+    [NSBundle mainBundle];
+    NSString *path = [[NSBundle mainBundle] pathForResource:NSStringFromClass(className) ofType:@"nib"];
+    Boolean exist = [[NSFileManager defaultManager] fileExistsAtPath:path];
+    if (!exist) {
+        className = [className superclass];
+        if ([className isSubclassOfClass:[UIViewController class]]&&![NSStringFromClass(className) isEqualToString:NSStringFromClass([UIViewController class])]) {
+            [self private_findXibName:className];
+        }
+    }
+    return NSStringFromClass(className);
+}
 - (UIViewController *)private_viewControllerForPage:(NSUInteger)pageIndex{
     if (pageIndex<self.pageViewControllerClasses.count) {
-        if (pageIndex<self.cacheViewControllerArray.count) {
+        if (pageIndex<self.cacheViewControllerArray.count&&![self.cacheViewControllerArray[pageIndex] isKindOfClass:[NSObject class]]) {
             return self.cacheViewControllerArray[pageIndex];
         }else{
             Class controllerClass =  self.pageViewControllerClasses[pageIndex];
-            UIViewController *controller = [[controllerClass alloc] init];
-            [self.cacheViewControllerArray insertObject:controller atIndex:pageIndex];
+            NSString *xibName = [self private_findXibName:controllerClass];
+            UIViewController *controller ;
+            if (xibName.length) {
+                controller = [[controllerClass alloc] initWithNibName:xibName bundle:nil];
+            }else{
+                controller = [[controllerClass alloc] init];
+            }
+            [self.cacheViewControllerArray replaceObjectAtIndex:pageIndex withObject:controller];
             return controller;
         }
     }
@@ -71,10 +94,17 @@
 }
 #pragma mark - Property
 -(void)setDefaultPage:(NSUInteger)defaultPage{
+    if(defaultPage==[self private_indexOfViewController:self.currentViewController]){
+        return;
+    }
     _defaultPage = defaultPage;
     if (_defaultPage<_pageViewControllerClasses.count) {
         UIPageViewControllerNavigationDirection direction = defaultPage<[self private_indexOfViewController:self.pageViewController.viewControllers.firstObject]?UIPageViewControllerNavigationDirectionReverse:UIPageViewControllerNavigationDirectionForward;
-       [self.pageViewController setViewControllers:@[[self private_viewControllerForPage:_defaultPage]] direction:direction animated:YES completion:nil];
+        self.currentViewController = [self private_viewControllerForPage:_defaultPage];
+       [self.pageViewController setViewControllers:@[self.currentViewController] direction:direction animated:YES completion:nil];
+        if (self.YTOPageViewControllerWillPageChanged) {
+            self.YTOPageViewControllerWillPageChanged(self.currentViewController);
+        }
     }
 
 }
@@ -100,6 +130,9 @@
 -(NSMutableArray *)cacheViewControllerArray{
     if (_cacheViewControllerArray==nil) {
         _cacheViewControllerArray = [NSMutableArray array];
+        for (NSObject *object in self.pageViewControllerClasses) {
+            [_cacheViewControllerArray addObject:object];
+        }
     }
     return _cacheViewControllerArray;
 }

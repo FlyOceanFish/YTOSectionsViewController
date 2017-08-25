@@ -13,6 +13,11 @@ typedef NS_ENUM(NSInteger, YTOPageViewControllerNavigationOrientation) {
 @interface YTOPagesViewController : UIViewController
 
 /**
+ 当前显示的视图
+ */
+@property(nonatomic,strong)UIViewController * _Nonnull currentViewController;
+
+/**
  要加载的ViewController，传ClassName即可
  */
 @property(nonatomic,copy)NSArray<Class> * _Nonnull pageViewControllerClasses;
@@ -27,7 +32,11 @@ typedef NS_ENUM(NSInteger, YTOPageViewControllerNavigationOrientation) {
  currentPage 当前页
  */
 @property(nonatomic,copy)void (^ _Nullable YTOPageViewControllerPageChanged)(NSUInteger currentPage);
-
+/**
+ 将要滑动的时候回调
+ currentPage 当前页
+ */
+@property(nonatomic,copy)void (^ _Nullable YTOPageViewControllerWillPageChanged)(UIViewController * _Nonnull controller);
 /**
  实例化PagesViewController
 
