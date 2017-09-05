@@ -1,5 +1,5 @@
 //
-//  YTOPageViewController.m
+//  YTOPageViewController.h
 //
 //  Created by FlyOceanFish on 2017/8/10.
 //  Copyright © 2017年 FlyOceanFish. All rights reserved.
@@ -69,7 +69,7 @@
 }
 - (UIViewController *)private_viewControllerForPage:(NSUInteger)pageIndex{
     if (pageIndex<self.pageViewControllerClasses.count) {
-        if (pageIndex<self.cacheViewControllerArray.count&&![self.cacheViewControllerArray[pageIndex] isKindOfClass:[NSObject class]]) {
+        if (pageIndex<self.cacheViewControllerArray.count&&[self.cacheViewControllerArray[pageIndex] isKindOfClass:[UIViewController class]]) {
             return self.cacheViewControllerArray[pageIndex];
         }else{
             Class controllerClass =  self.pageViewControllerClasses[pageIndex];
