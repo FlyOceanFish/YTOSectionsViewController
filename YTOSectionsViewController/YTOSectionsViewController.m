@@ -1,8 +1,9 @@
 //
 //  YTOSectionsViewController.m
+//  testaa
 //
 //  Created by FlyOceanFish on 2017/8/12.
-//  Copyright © 2017年 FlyOceanFish. All rights reserved.
+//  Copyright © 2017年 wangrifei. All rights reserved.
 //
 
 #import "YTOSectionsViewController.h"
@@ -65,7 +66,7 @@
     
     _segmentControl.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[view(height)]|" options:0 metrics:@{@"height":@(CGRectGetHeight(self.segmentControl.frame))} views:@{@"view":_segmentControl}]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-paddingLeft-[view]-paddingRight-|" options:0 metrics:@{@"paddingLeft":@(-16),@"paddingRight":@(0)} views:@{@"view":_segmentControl}]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[view]-0-|" options:0 metrics:nil views:@{@"view":_segmentControl}]];
 
     self.pageVC = [[YTOPagesViewController alloc] initWithNavigationOrientation:YTOPageViewControllerNavigationOrientationHorizontal betweenGap:0];
     self.pageVC.pageViewControllerClasses = self.pageViewControllerClasses;
@@ -77,9 +78,8 @@
     [self.view addSubview:self.pageVC.view];
     
     _pageVC.view.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-paddingLeft-[view]-paddingRight-|" options:NSLayoutFormatAlignAllLeft metrics:@{@"paddingLeft":@(-16),@"paddingRight":@(-16)} views:@{@"view":_pageVC.view}]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view2]-[view]-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":_pageVC.view,@"view2":_segmentControl}]];
-
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[view]-0-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":_pageVC.view}]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view2]-0-[view]-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":_pageVC.view,@"view2":_segmentControl}]];
     [self.pageVC didMoveToParentViewController:self];
 }
 - (void)yto_addParentViewController:(UIViewController *)vc{
@@ -87,8 +87,8 @@
     [vc.view addSubview:self.view];
     
     self.view.translatesAutoresizingMaskIntoConstraints = NO;
-    [vc.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":self.view}]];
-    [vc.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":self.view}]];
+    [vc.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[view]-0-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":self.view}]];
+    [vc.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[view]-0-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":self.view}]];
     [self didMoveToParentViewController:vc];
 }
 
