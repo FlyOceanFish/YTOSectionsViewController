@@ -3,7 +3,7 @@
 //  testaa
 //
 //  Created by FlyOceanFish on 2017/8/12.
-//  Copyright © 2017年 wangrifei. All rights reserved.
+//  Copyright © 2017年 FlyOceanFish. All rights reserved.
 //
 
 #import "YTOSectionsViewController.h"
@@ -18,6 +18,7 @@
 @property(nonatomic,assign)NSInteger bagedIndex;
 @property(nonatomic,strong)UIColor *badgeBgColor;
 @property(nonatomic,strong)UIColor *badgeTextColor;
+
 @end
 
 @implementation YTOSectionsViewController
@@ -58,6 +59,9 @@
     }
     [self.segmentControl setIndexChangeBlock:^(NSInteger index){
         this.pageVC.defaultPage = index;
+        if (this.sectonsPageChanged) {
+            this.sectonsPageChanged(index);
+        }
     }];
     if (self.bagedNumber!=-1) {
         [self yto_setNumber:self.bagedNumber AtIndex:self.bagedIndex badgeBgColor:self.badgeBgColor badgeTextColor:self.badgeTextColor];
@@ -97,7 +101,7 @@
 }
 - (void)yto_setNumber:(NSInteger)number AtIndex:(NSUInteger)index badgeBgColor:(UIColor *_Nullable)badgeBgColor badgeTextColor:(UIColor *_Nullable)badgeTextColor{
     if (self.segmentControl) {
-        [self.segmentControl yto_setNumber:number AtIndex:index badgeBgColor:badgeBgColor badgeTextColor:badgeTextColor];
+        [self.segmentControl yto_setNumber:number AtIndex:index badgeBgColor:badgeBgColor badgeTextColor:badgeTextColor badgeMaximumBadgeNumber:self.badgeMaximumBadgeNumber];
     }else{
         self.bagedNumber = number;
         self.bagedIndex = index;

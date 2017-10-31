@@ -1,5 +1,6 @@
 //
 //  YTOSectionsViewController.h
+//  testaa
 //
 //  Created by FlyOceanFish on 2017/8/12.
 //  Copyright © 2017年 FlyOceanFish. All rights reserved.
@@ -59,6 +60,11 @@ NS_ASSUME_NONNULL_BEGIN
  标题容器
  */
 @property(nonatomic,strong,readonly)YTOSegmentControl * segmentControl;
+
+/**
+ 设置数字最大值
+ */
+@property (nonatomic, assign) NSInteger badgeMaximumBadgeNumber;
 
 NS_ASSUME_NONNULL_END
 /**
