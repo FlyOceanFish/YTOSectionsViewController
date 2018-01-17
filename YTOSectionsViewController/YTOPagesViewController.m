@@ -1,21 +1,20 @@
 //
 //  YTOPageViewController.m
-//  testaa
 //
 //  Created by FlyOceanFish on 2017/8/10.
-//  Copyright © 2017年 wangrifei. All rights reserved.
+//  Copyright © 2017年 FlyOceanFish. All rights reserved.
 //
 
 #import "YTOPagesViewController.h"
 
 
 @interface YTOPagesViewController ()<UIPageViewControllerDataSource,UIPageViewControllerDelegate>
-@property(nonatomic,strong)UIPageViewController *pageViewController;
 @property(nonatomic,strong)NSMutableArray *cacheViewControllerArray;
 /**
  两个ViewController之间的间距
  */
 @property(nonatomic,assign)NSUInteger betweenGap;
+@property(nonatomic,strong,readwrite)UIPageViewController *pageViewController;
 @property(nonatomic,assign)YTOPageViewControllerNavigationOrientation pageViewControllerNavigationOrientation;
 @end
 
@@ -31,7 +30,7 @@
 #pragma mark - UIPageViewControllerDataSource&UIPageViewControllerDelegate
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<UIViewController *> *)pendingViewControllers{
     if (self.YTOPageViewControllerWillPageChanged) {
-        self.YTOPageViewControllerWillPageChanged(self.currentViewController);
+        self.YTOPageViewControllerWillPageChanged(pendingViewControllers.firstObject);
     }
 }
 - (nullable UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController{
@@ -104,10 +103,12 @@
     if (_defaultPage<_pageViewControllerClasses.count) {
         UIPageViewControllerNavigationDirection direction = defaultPage<[self private_indexOfViewController:self.pageViewController.viewControllers.firstObject]?UIPageViewControllerNavigationDirectionReverse:UIPageViewControllerNavigationDirectionForward;
         self.currentViewController = [self private_viewControllerForPage:_defaultPage];
-       [self.pageViewController setViewControllers:@[self.currentViewController] direction:direction animated:YES completion:nil];
         if (self.YTOPageViewControllerWillPageChanged) {
             self.YTOPageViewControllerWillPageChanged(self.currentViewController);
         }
+        [self.pageViewController setViewControllers:@[self.currentViewController] direction:direction animated:NO completion:^(BOOL finised){
+            
+        }];
     }
 
 }
