@@ -58,13 +58,14 @@
 
 #pragma mark - Private
 - (NSString *)private_findXibName:(Class)className{
-    [NSBundle mainBundle];
     NSString *path = [[NSBundle mainBundle] pathForResource:NSStringFromClass(className) ofType:@"nib"];
     Boolean exist = [[NSFileManager defaultManager] fileExistsAtPath:path];
     if (!exist) {
         className = [className superclass];
         if ([className isSubclassOfClass:[UIViewController class]]&&![NSStringFromClass(className) isEqualToString:NSStringFromClass([UIViewController class])]) {
             [self private_findXibName:className];
+        }else{
+         className = nil;
         }
     }
     return NSStringFromClass(className);
