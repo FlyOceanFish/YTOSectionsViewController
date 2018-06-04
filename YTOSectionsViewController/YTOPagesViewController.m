@@ -63,7 +63,7 @@
     if (!exist) {
         className = [className superclass];
         if ([className isSubclassOfClass:[UIViewController class]]&&![NSStringFromClass(className) isEqualToString:NSStringFromClass([UIViewController class])]) {
-            [self private_findXibName:className];
+            return [self private_findXibName:className];
         }else{
          className = nil;
         }
