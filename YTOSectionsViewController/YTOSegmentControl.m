@@ -1,17 +1,22 @@
 //
 //  YTOSegmentControl.m
+//  testaa
 //
-//  Created by FlyOceanFish on 2017/8/11.
-//  Copyright © 2017年 FlyOceanFish. All rights reserved.
+//  Created by wangrifei on 2017/8/11.
+//  Copyright © 2017年 wangrifei. All rights reserved.
 //
 
 #import "YTOSegmentControl.h"
 #import "YTOSectionTitleCollectionViewCell.h"
 #import "UIView+WZLBadge.h"
 
+typedef NS_ENUM(NSUInteger, EffectSide) {
+    LEFT,
+    RIGHT,
+    BOTH,
+};
 const NSUInteger defaultTextSize = 12;
 const NSUInteger selectionIndicatorHeight = 2;
-
 @interface YTOSegmentControl()<UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
 @property(nonatomic,strong)UICollectionView *collectionView;
 @property(nonatomic,strong)CALayer *selectionIndicatorArrowLayer;
@@ -21,10 +26,11 @@ const NSUInteger selectionIndicatorHeight = 2;
 @property(nonatomic,assign)NSInteger bagedIndex;
 @property(nonatomic,strong)UIColor *badgeBgColor;
 @property(nonatomic,strong)UIColor *badgeTextColor;
-
+@property (nonatomic, assign) NSInteger badgeMaximumBadgeNumber;
 @end
 
 @implementation YTOSegmentControl
+@dynamic selectionIndicatorColor;
 - (instancetype)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
@@ -53,12 +59,13 @@ const NSUInteger selectionIndicatorHeight = 2;
 #pragma mark - Init
 - (void)initDefault{
     self.backgroundColor = [UIColor whiteColor];
-    self.selectionIndicatorColor = [UIColor redColor];
+//    self.selectionIndicatorColor = [UIColor redColor];
     self.selectionIndicatorHeight = selectionIndicatorHeight;
     self.segmentWidthStyle = YTOSegmentedControlSegmentWidthStyleFixed;
     self.selectionIndicatorLocation = YTOSegmentControlSelectionIndicatorLocationDown;
     self.selectedSegmentIndex = 0;
     self.bagedIndex = -1;
+    self.defaultBackgroundColor = [UIColor whiteColor];
 }
 - (void)initUI:(CGRect)frame{
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
@@ -73,7 +80,9 @@ const NSUInteger selectionIndicatorHeight = 2;
     [self addSubview:self.collectionView];
     [self.collectionView registerClass:[YTOSectionTitleCollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
     [self.collectionView.layer addSublayer:self.selectionIndicatorArrowLayer];
+    self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
 }
+
 #pragma mark - UICollectionViewDataSource&UICollectionViewDelegateFlowLayout
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
     if (self.segmentWidthStyle == YTOSegmentedControlSegmentWidthStyleFixed) {
@@ -92,35 +101,56 @@ const NSUInteger selectionIndicatorHeight = 2;
     }
     cell.textLabel.font = self.titleTextFont==nil?[UIFont systemFontOfSize:defaultTextSize]:self.titleTextFont;
     cell.textLabel.text = self.sectionTitles[indexPath.row];
+    cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.textLabel.highlightedTextColor = self.selectedTitleTextColor==nil?[UIColor redColor]:self.selectedTitleTextColor;
     cell.textLabel.textColor = (self.titleTextColor==nil?[UIColor blackColor]:self.titleTextColor);
     if (self.bagedIndex==indexPath.row) {
-        [self private_setBadgeForCell:cell number:self.bagedNumber index:self.bagedIndex badgeBgColor:self.badgeBgColor badgeTextColor:self.badgeTextColor];
+        [self private_setBadgeForCell:cell number:self.bagedNumber index:self.bagedIndex badgeBgColor:self.badgeBgColor badgeTextColor:self.badgeTextColor badgeMaximumBadgeNumber:self.badgeMaximumBadgeNumber];
+    }
+    if (self.enableSelectedEffect&&self.selectedSegmentIndex==indexPath.row) {
+        cell.backgroundColor = self.selectedBackgroundColor;
+    }else{
+       cell.backgroundColor = self.defaultBackgroundColor;
     }
     return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     if (self.preIndexPath&&self.preIndexPath!=indexPath) {
+        YTOSectionTitleCollectionViewCell *cell = (YTOSectionTitleCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
+        cell.backgroundColor = self.selectedBackgroundColor;
         [collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:self.segmentWidthStyle==YTOSegmentedControlSegmentWidthStyleFixed?UICollectionViewScrollPositionNone:UICollectionViewScrollPositionCenteredHorizontally];
+        cell = (YTOSectionTitleCollectionViewCell *)[collectionView cellForItemAtIndexPath:self.preIndexPath];
+        cell.backgroundColor = self.defaultBackgroundColor;
         [collectionView deselectItemAtIndexPath:self.preIndexPath animated:NO];
         [self private_scrollIndicator:indexPath];
+        [self _setLayerMask:indexPath.item];
+
     }
     self.preIndexPath = indexPath;
 }
 #pragma mark - Action
-- (void)yto_setNumber:(NSInteger)number AtIndex:(NSUInteger)index badgeBgColor:(UIColor *)badgeBgColor badgeTextColor:(UIColor *)badgeTextColor{
+- (void)yto_setNumber:(NSInteger)number AtIndex:(NSUInteger)index badgeBgColor:(UIColor *)badgeBgColor badgeTextColor:(UIColor *)badgeTextColor badgeMaximumBadgeNumber:(NSInteger)badgeMaximumBadgeNumber{
     NSAssert(index<self.sectionTitles.count, @"请先设置标题，数组越界了");
     YTOSectionTitleCollectionViewCell *cell = (YTOSectionTitleCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     if (cell) {
-        [self private_setBadgeForCell:cell number:number index:index badgeBgColor:badgeBgColor badgeTextColor:badgeTextColor];
+        [self private_setBadgeForCell:cell number:number index:index badgeBgColor:badgeBgColor badgeTextColor:badgeTextColor badgeMaximumBadgeNumber:badgeMaximumBadgeNumber];
     }else{
         _bagedIndex = index;
         _bagedNumber = number;
         _badgeBgColor = badgeBgColor;
         _badgeTextColor = badgeTextColor;
+        _badgeMaximumBadgeNumber = badgeMaximumBadgeNumber;
     }
 }
 #pragma mark - Property
+-(void)setEnableSelectedEffect:(BOOL)enableSelectedEffect{
+    _enableSelectedEffect = enableSelectedEffect;
+    self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
+}
+-(void)setSelectedBackgroundColor:(UIColor *)selectedBackgroundColor{
+    _selectedBackgroundColor = selectedBackgroundColor;
+    [self.collectionView reloadData];
+}
 -(void)setSectionTitles:(NSArray<NSString *> *)sectionTitles{
     _sectionTitles = sectionTitles;
     [self.collectionView reloadData];
@@ -128,6 +158,12 @@ const NSUInteger selectionIndicatorHeight = 2;
 -(void)setSelectionIndicatorHeight:(CGFloat)selectionIndicatorHeight{
     _selectionIndicatorHeight = selectionIndicatorHeight;
     self.selectionIndicatorArrowLayer.frame = CGRectMake(self.selectionIndicatorArrowLayer.frame.origin.x+self.selectionIndicatorEdgeInsets.left, self.selectionIndicatorArrowLayer.frame.origin.y,CGRectGetWidth(self.selectionIndicatorArrowLayer.bounds)-self.selectionIndicatorEdgeInsets.left-self.selectionIndicatorEdgeInsets.right, _selectionIndicatorHeight);
+}
+-(void)setSelectionIndicatorColor:(UIColor *)selectionIndicatorColor{
+    self.selectionIndicatorArrowLayer.backgroundColor = selectionIndicatorColor.CGColor;
+}
+-(UIColor *)selectionIndicatorColor{
+    return [UIColor colorWithCGColor:self.selectionIndicatorArrowLayer.backgroundColor];
 }
 -(CALayer *)selectionIndicatorArrowLayer{
     if (_selectionIndicatorArrowLayer == nil) {
@@ -144,11 +180,18 @@ const NSUInteger selectionIndicatorHeight = 2;
 }
 -(void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex{
     if (selectedSegmentIndex<self.sectionTitles.count) {
+        if (self.preIndexPath) {
+            YTOSectionTitleCollectionViewCell *cell = (YTOSectionTitleCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.preIndexPath];
+            cell.backgroundColor = self.defaultBackgroundColor;
+        }
         self.preIndexPath = [NSIndexPath indexPathForRow:selectedSegmentIndex inSection:0];
         [self private_scrollIndicator:self.preIndexPath];
         [self.collectionView selectItemAtIndexPath:self.preIndexPath animated:YES scrollPosition:UICollectionViewScrollPositionCenteredHorizontally];
+        YTOSectionTitleCollectionViewCell *cell = (YTOSectionTitleCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.preIndexPath];
+        cell.backgroundColor = self.selectedBackgroundColor;
+        [self _setLayerMask:selectedSegmentIndex];
     }
-
+    
 }
 -(void)setSelectionIndicatorLocation:(YTOSegmentedControlSelectionIndicatorLocation)selectionIndicatorLocation{
     _selectionIndicatorLocation = selectionIndicatorLocation;
@@ -172,9 +215,8 @@ const NSUInteger selectionIndicatorHeight = 2;
         }
     }];
 }
-- (void)private_setBadgeForCell:(YTOSectionTitleCollectionViewCell *)cell number:(NSInteger)number index:(NSInteger)index badgeBgColor:(UIColor *)badgeBgColor badgeTextColor:(UIColor *)badgeTextColor{
-    [cell.textLabel showNumberBadgeWithValue:number];
-    CGPoint point = CGPointMake(-((CGRectGetWidth(cell.frame)-[self private_textSizeWidth:index])/2.0-6), (CGRectGetHeight(cell.frame)-cell.textLabel.font.lineHeight)/2.0);
+- (void)private_setBadgeForCell:(YTOSectionTitleCollectionViewCell *)cell number:(NSInteger)number index:(NSInteger)index badgeBgColor:(UIColor *)badgeBgColor badgeTextColor:(UIColor *)badgeTextColor badgeMaximumBadgeNumber:(NSInteger)badgeMaximumBadgeNumber{
+    CGPoint point = CGPointMake(-((CGRectGetWidth(cell.frame)-[self private_textSizeWidth:index])/2.0-12), (CGRectGetHeight(cell.frame)-cell.textLabel.font.lineHeight)/2.0);
     cell.textLabel.badgeCenterOffset = point;
     if (badgeBgColor) {
         cell.textLabel.badgeBgColor = badgeBgColor;
@@ -182,6 +224,10 @@ const NSUInteger selectionIndicatorHeight = 2;
     if (badgeTextColor) {
         cell.textLabel.badgeTextColor = badgeTextColor;
     }
+    if (badgeMaximumBadgeNumber>0) {
+        cell.textLabel.badgeMaximumBadgeNumber = badgeMaximumBadgeNumber;
+    }
+    [cell.textLabel showNumberBadgeWithValue:number];
 }
 - (CGFloat)private_textSizeWidth:(NSUInteger)index{
     NSString *string = self.sectionTitles[index];
@@ -193,5 +239,57 @@ const NSUInteger selectionIndicatorHeight = 2;
     }else if (self.selectionIndicatorLocation==YTOSegmentControlSelectionIndicatorLocationUp){
         self.selectionIndicatorArrowLayer.frame = CGRectMake(offX+self.selectionIndicatorEdgeInsets.left,0,width-self.selectionIndicatorEdgeInsets.left-self.selectionIndicatorEdgeInsets.right, self.selectionIndicatorHeight);
     }
+}
+- (void)_setLayerMask:(NSInteger)index{
+    if (index==0) {
+        self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
+    }else if (index==self.sectionTitles.count-1){
+        self.collectionView.layer.mask = [self _backgroundLayer:LEFT];
+    }else{
+        self.collectionView.layer.mask = [self _backgroundLayer:BOTH];
+    }
+}
+- (CALayer *)_backgroundLayer:(EffectSide)side{
+    CGFloat height = 40;
+    CGFloat itemWidth = CGRectGetWidth(self.bounds)/self.sectionTitles.count;
+    CGFloat width = CGRectGetWidth(self.bounds);
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    [path setLineJoinStyle:kCGLineJoinBevel];
+    if (side==RIGHT) {
+        [path moveToPoint:CGPointZero];
+        [path addLineToPoint:CGPointMake(itemWidth, 0)];
+        [path addCurveToPoint:CGPointMake(itemWidth-10, height) controlPoint1:CGPointMake(itemWidth-12, 10) controlPoint2:CGPointMake(itemWidth+6, height-10)];
+        
+        [path addLineToPoint:CGPointMake(0, height)];
+        [path moveToPoint:CGPointMake(itemWidth, 0)];
+        [path addLineToPoint:CGPointMake(width, 0)];
+        [path addLineToPoint:CGPointMake(width, height)];
+        [path addLineToPoint:CGPointMake(itemWidth, height)];
+        [path addLineToPoint:CGPointMake(itemWidth, 0)];
+        [path addLineToPoint:CGPointMake(0, 0)];
+    }else if (side==LEFT){
+        [path moveToPoint:CGPointZero];
+        [path addLineToPoint:CGPointMake(itemWidth, 0)];
+        [path addLineToPoint:CGPointMake(itemWidth, height)];
+        [path addLineToPoint:CGPointMake(0, height)];
+        [path addLineToPoint:CGPointZero];
+        
+        [path moveToPoint:CGPointMake(itemWidth, 0)];
+        [path addCurveToPoint:CGPointMake(itemWidth+20, height) controlPoint1:CGPointMake(itemWidth+15, 10) controlPoint2:CGPointMake(itemWidth-6, height-5)];
+        [path addLineToPoint:CGPointMake(width, height)];
+        [path addLineToPoint:CGPointMake(width, 0)];
+        [path addLineToPoint:CGPointMake(itemWidth, 0)];
+
+        
+
+    }else{
+        
+    }
+    CAShapeLayer *_bezierLineLayer = [CAShapeLayer layer];
+    _bezierLineLayer.fillColor = [[UIColor blackColor] CGColor];
+    _bezierLineLayer.lineWidth = 1;
+    _bezierLineLayer.lineCap = kCALineCapRound;
+    _bezierLineLayer.path = path.CGPath;
+    return _bezierLineLayer;
 }
 @end

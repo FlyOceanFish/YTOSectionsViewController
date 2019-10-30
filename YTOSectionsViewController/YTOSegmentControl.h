@@ -2,8 +2,8 @@
 //  YTOSegmentControl.h
 //  testaa
 //
-//  Created by FlyOceanFish on 2017/8/11.
-//  Copyright © 2017年 FlyOceanFish. All rights reserved.
+//  Created by wangrifei on 2017/8/11.
+//  Copyright © 2017年 wangrifei. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -18,8 +18,7 @@ typedef NS_ENUM(NSInteger, YTOSegmentedControlSelectionIndicatorLocation) {
 typedef NS_ENUM(NSInteger, YTOSegmentedControlSegmentWidthStyle) {
     YTOSegmentedControlSegmentWidthStyleFixed,
     YTOSegmentedControlSegmentWidthStyleDynamic,
-};
-@interface YTOSegmentControl : UIView
+};@interface YTOSegmentControl : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame titles:(NSArray<NSString *>*)sectionTitles;
 - (instancetype)initWithFrame:(CGRect)frame titles:(NSArray<NSString *>*)sectionTitles segmentWidthStyle:(YTOSegmentedControlSegmentWidthStyle) segmentWidthStyle;
@@ -37,37 +36,48 @@ typedef NS_ENUM(NSInteger, YTOSegmentedControlSegmentWidthStyle) {
 /**
  不选中时文本的颜色
  */
-@property (nonatomic, strong) UIColor *titleTextColor;
+@property (nonatomic, strong) UIColor *titleTextColor UI_APPEARANCE_SELECTOR;
 
 /**
  选中文本的颜色
  */
-@property (nonatomic, strong) UIColor *selectedTitleTextColor;
-
+@property (nonatomic, strong) UIColor *selectedTitleTextColor UI_APPEARANCE_SELECTOR;
+/**
+ 选中背景的颜色
+ */
+@property (nonatomic, strong) UIColor *selectedBackgroundColor UI_APPEARANCE_SELECTOR;
+/**
+ 不选中背景的颜色
+ */
+@property (nonatomic, strong) UIColor *defaultBackgroundColor UI_APPEARANCE_SELECTOR;
+/**
+ 选中时的特效
+ */
+@property (nonatomic, assign) BOOL enableSelectedEffect UI_APPEARANCE_SELECTOR;
 /**
  文字大小
  */
-@property (nonatomic, strong) UIFont *titleTextFont;
+@property (nonatomic, strong) UIFont *titleTextFont UI_APPEARANCE_SELECTOR;
 
 /**
  设置当前选中第几个
  */
-@property (nonatomic, assign) NSInteger selectedSegmentIndex;
+@property (nonatomic, assign) NSInteger selectedSegmentIndex UI_APPEARANCE_SELECTOR;
 
 /**
  Indicator的高度
  */
-@property (nonatomic, assign) CGFloat selectionIndicatorHeight;
+@property (nonatomic, assign) CGFloat selectionIndicatorHeight UI_APPEARANCE_SELECTOR;
 
 /**
  Indicator左右边距
  */
-@property (nonatomic, readwrite) UIEdgeInsets selectionIndicatorEdgeInsets;
+@property (nonatomic, readwrite) UIEdgeInsets selectionIndicatorEdgeInsets UI_APPEARANCE_SELECTOR;
 
 /**
  Indicator的颜色
  */
-@property (nonatomic, strong) UIColor *selectionIndicatorColor;
+@property (nonatomic, strong) UIColor *selectionIndicatorColor UI_APPEARANCE_SELECTOR;
 
 /**
  Indicator位置 支持上、下、无
@@ -76,5 +86,5 @@ typedef NS_ENUM(NSInteger, YTOSegmentedControlSegmentWidthStyle) {
 
 @property (nonatomic, assign) YTOSegmentedControlSegmentWidthStyle segmentWidthStyle;
 
-- (void)yto_setNumber:(NSInteger)number AtIndex:(NSUInteger)index badgeBgColor:(UIColor *)badgeBgColor badgeTextColor:(UIColor *)badgeTextColor;
+- (void)yto_setNumber:(NSInteger)number AtIndex:(NSUInteger)index badgeBgColor:(UIColor *)badgeBgColor badgeTextColor:(UIColor *)badgeTextColor badgeMaximumBadgeNumber:(NSInteger)badgeMaximumBadgeNumber;
 @end
