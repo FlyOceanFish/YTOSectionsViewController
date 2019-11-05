@@ -80,7 +80,7 @@ const NSUInteger selectionIndicatorHeight = 2;
     [self addSubview:self.collectionView];
     [self.collectionView registerClass:[YTOSectionTitleCollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
     [self.collectionView.layer addSublayer:self.selectionIndicatorArrowLayer];
-    self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
+//    self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
 }
 
 #pragma mark - UICollectionViewDataSource&UICollectionViewDelegateFlowLayout
@@ -145,7 +145,11 @@ const NSUInteger selectionIndicatorHeight = 2;
 #pragma mark - Property
 -(void)setEnableSelectedEffect:(BOOL)enableSelectedEffect{
     _enableSelectedEffect = enableSelectedEffect;
-    self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
+    if (_enableSelectedEffect) {
+        self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
+    }else{
+        self.collectionView.layer.mask = nil;
+    }
 }
 -(void)setSelectedBackgroundColor:(UIColor *)selectedBackgroundColor{
     _selectedBackgroundColor = selectedBackgroundColor;
@@ -241,13 +245,18 @@ const NSUInteger selectionIndicatorHeight = 2;
     }
 }
 - (void)_setLayerMask:(NSInteger)index{
-    if (index==0) {
-        self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
-    }else if (index==self.sectionTitles.count-1){
-        self.collectionView.layer.mask = [self _backgroundLayer:LEFT];
+    if (self.enableSelectedEffect) {
+        if (index==0) {
+            self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
+        }else if (index==self.sectionTitles.count-1){
+            self.collectionView.layer.mask = [self _backgroundLayer:LEFT];
+        }else{
+            self.collectionView.layer.mask = [self _backgroundLayer:BOTH];
+        }
     }else{
-        self.collectionView.layer.mask = [self _backgroundLayer:BOTH];
+        self.collectionView.layer.mask = nil;
     }
+
 }
 - (CALayer *)_backgroundLayer:(EffectSide)side{
     CGFloat height = 40;
