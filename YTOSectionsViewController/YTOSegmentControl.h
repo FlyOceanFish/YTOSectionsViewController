@@ -2,7 +2,7 @@
 //  YTOSegmentControl.h
 //  testaa
 //
-//  Created by wangrifei on 2017/8/11.
+//  Created by FlyOceanFish on 2017/8/11.
 //  Copyright © 2017年 wangrifei. All rights reserved.
 //
 
