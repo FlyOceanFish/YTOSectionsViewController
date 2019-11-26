@@ -2,8 +2,8 @@
 //  YTOSectionsViewController.m
 //  testaa
 //
-//  Created by FlyOceanFish on 2017/8/12.
-//  Copyright © 2017年 FlyOceanFish. All rights reserved.
+//  Created by wangrifei on 2017/8/12.
+//  Copyright © 2017年 wangrifei. All rights reserved.
 //
 
 #import "YTOSectionsViewController.h"
@@ -80,7 +80,6 @@
     }];
     [self addChildViewController:self.pageVC];
     [self.view addSubview:self.pageVC.view];
-    
     _pageVC.view.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[view]-0-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":_pageVC.view}]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view2]-0-[view]-|" options:NSLayoutFormatAlignAllLeft metrics:nil views:@{@"view":_pageVC.view,@"view2":_segmentControl}]];
@@ -109,6 +108,24 @@
         self.badgeTextColor = badgeTextColor;
     }
 
+}
+-(void)setDefaultPage:(NSUInteger)defaultPage{
+    if(_defaultPage!=defaultPage){
+        _defaultPage = defaultPage;
+        self.segmentControl.selectedSegmentIndex = _defaultPage;
+    }
+}
+-(void)setSelectedTitleTextColor:(UIColor *)selectedTitleTextColor{
+    _selectedTitleTextColor = selectedTitleTextColor;
+    self.segmentControl.selectedTitleTextColor = self.selectedTitleTextColor;
+}
+-(void)setTitleTextFont:(UIFont *)titleTextFont{
+    _titleTextFont = titleTextFont;
+    self.segmentControl.titleTextFont = titleTextFont;
+}
+-(void)setTitleTextColor:(UIColor *)titleTextColor{
+    _titleTextColor = titleTextColor;
+    self.segmentControl.titleTextColor = titleTextColor;
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

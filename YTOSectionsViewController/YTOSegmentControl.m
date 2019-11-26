@@ -146,7 +146,7 @@ const NSUInteger selectionIndicatorHeight = 2;
 -(void)setEnableSelectedEffect:(BOOL)enableSelectedEffect{
     _enableSelectedEffect = enableSelectedEffect;
     if (_enableSelectedEffect) {
-        self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
+        self.collectionView.layer.mask = [self _backgroundLayer:LEFT];
     }else{
         self.collectionView.layer.mask = nil;
     }
@@ -204,6 +204,10 @@ const NSUInteger selectionIndicatorHeight = 2;
     }else if (_selectionIndicatorLocation==YTOSegmentControlSelectionIndicatorLocationUp){
         self.selectionIndicatorArrowLayer.frame = CGRectMake(self.selectionIndicatorArrowLayer.frame.origin.x, 0, CGRectGetWidth(self.selectionIndicatorArrowLayer.bounds), CGRectGetHeight(self.selectionIndicatorArrowLayer.bounds));
     }
+    if (self.selectedSegmentIndex==0) {
+        self.preIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self private_scrollIndicator:self.preIndexPath];
+    }
 }
 -(void)setSelectionIndicatorEdgeInsets:(UIEdgeInsets)selectionIndicatorEdgeInsets{
     _selectionIndicatorEdgeInsets = selectionIndicatorEdgeInsets;
@@ -247,9 +251,9 @@ const NSUInteger selectionIndicatorHeight = 2;
 - (void)_setLayerMask:(NSInteger)index{
     if (self.enableSelectedEffect) {
         if (index==0) {
-            self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
-        }else if (index==self.sectionTitles.count-1){
             self.collectionView.layer.mask = [self _backgroundLayer:LEFT];
+        }else if (index==self.sectionTitles.count-1){
+            self.collectionView.layer.mask = [self _backgroundLayer:RIGHT];
         }else{
             self.collectionView.layer.mask = [self _backgroundLayer:BOTH];
         }
