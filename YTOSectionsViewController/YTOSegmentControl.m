@@ -3,7 +3,7 @@
 //  testaa
 //
 //  Created by FlyOceanFish on 2017/8/11.
-//  Copyright © 2017年 wangrifei. All rights reserved.
+//  Copyright © 2017年 FlyOceanFish. All rights reserved.
 //
 
 #import "YTOSegmentControl.h"
@@ -97,7 +97,7 @@ const NSUInteger selectionIndicatorHeight = 2;
     static NSString *identify = @"cell";
     YTOSectionTitleCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
     if (self.preIndexPath==indexPath) {
-            [self private_setSelectionIndicatorArrowLayerOff:cell.frame.origin.x width:CGRectGetWidth(cell.bounds)];
+        [self private_setSelectionIndicatorArrowLayerOff:cell.frame.origin.x width:CGRectGetWidth(cell.bounds)];
     }
     cell.textLabel.font = self.titleTextFont==nil?[UIFont systemFontOfSize:defaultTextSize]:self.titleTextFont;
     cell.textLabel.text = self.sectionTitles[indexPath.row];
@@ -112,15 +112,24 @@ const NSUInteger selectionIndicatorHeight = 2;
     }else{
        cell.backgroundColor = self.defaultBackgroundColor;
     }
+    if (self.selectedSegmentIndex==indexPath.row) {
+        if (self.selectedTitleTextFont) {
+            cell.textLabel.font = self.selectedTitleTextFont;
+        }
+    }
     return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     if (self.preIndexPath&&self.preIndexPath!=indexPath) {
         YTOSectionTitleCollectionViewCell *cell = (YTOSectionTitleCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
         cell.backgroundColor = self.selectedBackgroundColor;
+        if (self.selectedTitleTextFont) {
+          cell.textLabel.font = self.selectedTitleTextFont;
+        }
         [collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:self.segmentWidthStyle==YTOSegmentedControlSegmentWidthStyleFixed?UICollectionViewScrollPositionNone:UICollectionViewScrollPositionCenteredHorizontally];
         cell = (YTOSectionTitleCollectionViewCell *)[collectionView cellForItemAtIndexPath:self.preIndexPath];
         cell.backgroundColor = self.defaultBackgroundColor;
+        cell.textLabel.font = self.titleTextFont==nil?[UIFont systemFontOfSize:defaultTextSize]:self.titleTextFont;
         [collectionView deselectItemAtIndexPath:self.preIndexPath animated:NO];
         [self private_scrollIndicator:indexPath];
         [self _setLayerMask:indexPath.item];
@@ -187,12 +196,16 @@ const NSUInteger selectionIndicatorHeight = 2;
         if (self.preIndexPath) {
             YTOSectionTitleCollectionViewCell *cell = (YTOSectionTitleCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.preIndexPath];
             cell.backgroundColor = self.defaultBackgroundColor;
+            cell.textLabel.font = self.titleTextFont==nil?[UIFont systemFontOfSize:defaultTextSize]:self.titleTextFont;
         }
         self.preIndexPath = [NSIndexPath indexPathForRow:selectedSegmentIndex inSection:0];
         [self private_scrollIndicator:self.preIndexPath];
         [self.collectionView selectItemAtIndexPath:self.preIndexPath animated:YES scrollPosition:UICollectionViewScrollPositionCenteredHorizontally];
         YTOSectionTitleCollectionViewCell *cell = (YTOSectionTitleCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.preIndexPath];
         cell.backgroundColor = self.selectedBackgroundColor;
+        if (self.selectedTitleTextFont) {
+            cell.textLabel.font = self.selectedTitleTextFont;
+        }
         [self _setLayerMask:selectedSegmentIndex];
     }
     

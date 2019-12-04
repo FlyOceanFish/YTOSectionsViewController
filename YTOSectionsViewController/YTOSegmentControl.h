@@ -3,7 +3,7 @@
 //  testaa
 //
 //  Created by FlyOceanFish on 2017/8/11.
-//  Copyright © 2017年 wangrifei. All rights reserved.
+//  Copyright © 2017年 FlyOceanFish. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -58,7 +58,10 @@ typedef NS_ENUM(NSInteger, YTOSegmentedControlSegmentWidthStyle) {
  文字大小
  */
 @property (nonatomic, strong) UIFont *titleTextFont UI_APPEARANCE_SELECTOR;
-
+/**
+ 选中文字大小
+ */
+@property (nonatomic, strong) UIFont *selectedTitleTextFont UI_APPEARANCE_SELECTOR;
 /**
  设置当前选中第几个
  */
