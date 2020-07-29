@@ -15,7 +15,7 @@ typedef NS_ENUM(NSUInteger, EffectSide) {
     RIGHT,
     BOTH,
 };
-const NSUInteger defaultTextSize = 12;
+const NSUInteger mdefaultTextSize = 12;
 const NSUInteger selectionIndicatorHeight = 2;
 @interface YTOSegmentControl()<UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
 @property(nonatomic,strong)UICollectionView *collectionView;
@@ -99,7 +99,7 @@ const NSUInteger selectionIndicatorHeight = 2;
     if (self.preIndexPath==indexPath) {
         [self private_setSelectionIndicatorArrowLayerOff:cell.frame.origin.x width:CGRectGetWidth(cell.bounds)];
     }
-    cell.textLabel.font = self.titleTextFont==nil?[UIFont systemFontOfSize:defaultTextSize]:self.titleTextFont;
+    cell.textLabel.font = self.titleTextFont==nil?[UIFont systemFontOfSize:mdefaultTextSize]:self.titleTextFont;
     cell.textLabel.text = self.sectionTitles[indexPath.row];
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.textLabel.highlightedTextColor = self.selectedTitleTextColor==nil?[UIColor redColor]:self.selectedTitleTextColor;
@@ -129,7 +129,7 @@ const NSUInteger selectionIndicatorHeight = 2;
         [collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:self.segmentWidthStyle==YTOSegmentedControlSegmentWidthStyleFixed?UICollectionViewScrollPositionNone:UICollectionViewScrollPositionCenteredHorizontally];
         cell = (YTOSectionTitleCollectionViewCell *)[collectionView cellForItemAtIndexPath:self.preIndexPath];
         cell.backgroundColor = self.defaultBackgroundColor;
-        cell.textLabel.font = self.titleTextFont==nil?[UIFont systemFontOfSize:defaultTextSize]:self.titleTextFont;
+        cell.textLabel.font = self.titleTextFont==nil?[UIFont systemFontOfSize:mdefaultTextSize]:self.titleTextFont;
         [collectionView deselectItemAtIndexPath:self.preIndexPath animated:NO];
         [self private_scrollIndicator:indexPath];
         [self _setLayerMask:indexPath.item];
@@ -192,11 +192,12 @@ const NSUInteger selectionIndicatorHeight = 2;
     }
 }
 -(void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex{
+    _selectedSegmentIndex = selectedSegmentIndex;
     if (selectedSegmentIndex<self.sectionTitles.count) {
         if (self.preIndexPath) {
             YTOSectionTitleCollectionViewCell *cell = (YTOSectionTitleCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.preIndexPath];
             cell.backgroundColor = self.defaultBackgroundColor;
-            cell.textLabel.font = self.titleTextFont==nil?[UIFont systemFontOfSize:defaultTextSize]:self.titleTextFont;
+            cell.textLabel.font = self.titleTextFont==nil?[UIFont systemFontOfSize:mdefaultTextSize]:self.titleTextFont;
         }
         self.preIndexPath = [NSIndexPath indexPathForRow:selectedSegmentIndex inSection:0];
         [self private_scrollIndicator:self.preIndexPath];
@@ -252,7 +253,7 @@ const NSUInteger selectionIndicatorHeight = 2;
 }
 - (CGFloat)private_textSizeWidth:(NSUInteger)index{
     NSString *string = self.sectionTitles[index];
-    return ceil([string boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGRectGetHeight(self.bounds)) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSBackgroundColorAttributeName:[UIFont systemFontOfSize:defaultTextSize]} context:nil].size.width)+1;
+    return ceil([string boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGRectGetHeight(self.bounds)) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSBackgroundColorAttributeName:[UIFont systemFontOfSize:mdefaultTextSize]} context:nil].size.width)+1;
 }
 - (void)private_setSelectionIndicatorArrowLayerOff:(CGFloat)offX width:(CGFloat)width{
     if (self.selectionIndicatorLocation==YTOSegmentControlSelectionIndicatorLocationDown) {
